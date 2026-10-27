@@ -1,1 +1,7 @@
-~$*) 
+*.xlsx
+*.py
+*.py
+*.txt
+*.png
+backup/
+~$*
