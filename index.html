@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ofertas Especiais | Toyota</title>
+<style>
+  :root{
+    --vermelho:#EB0A1E;
+    --vermelho-esc:#B80818;
+    --preto:#1A1A1A;
+    --cinza:#58595B;
+    --cinza-claro:#F4F4F4;
+    --borda:#E2E2E2;
+    --branco:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Arial,sans-serif;background:var(--cinza-claro);color:var(--preto)}
+
+  /* ===== LOGIN ===== */
+  #telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--preto) 0%,#2b2b2b 60%,var(--vermelho-esc) 100%);padding:20px}
+  .login-box{background:var(--branco);width:100%;max-width:380px;border-radius:12px;
+    padding:36px 32px;box-shadow:0 10px 40px rgba(0,0,0,.35);border-top:6px solid var(--vermelho)}
+  .logo{font-size:28px;font-weight:800;letter-spacing:4px;color:var(--vermelho);text-align:center}
+  .login-box h2{text-align:center;font-size:15px;color:var(--cinza);font-weight:500;margin:6px 0 26px}
+  .login-box label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+  .login-box input{width:100%;padding:12px;border:1px solid var(--borda);border-radius:8px;
+    font-size:15px;margin-bottom:16px}
+  .login-box input:focus{outline:2px solid var(--vermelho);border-color:transparent}
+  .btn{background:var(--vermelho);color:var(--branco);border:none;border-radius:8px;
+    padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s}
+  .btn:hover{background:var(--vermelho-esc)}
+  .btn-full{width:100%}
+  .erro{color:var(--vermelho);font-size:13px;text-align:center;margin-top:12px;min-height:18px}
+
+  /* ===== APP ===== */
+  #telaApp{display:none}
+  header{background:var(--preto);color:var(--branco);padding:14px 24px;display:flex;
+    align-items:center;justify-content:space-between;border-bottom:4px solid var(--vermelho);
+    position:sticky;top:0;z-index:10}
+  header .logo{font-size:22px;text-align:left}
+  header .titulo{font-size:13px;color:#ccc;margin-left:14px}
+  .usuario{display:flex;align-items:center;gap:14px;font-size:14px}
+  .btn-sair{background:transparent;border:1px solid #777;color:var(--branco);padding:7px 14px;
+    border-radius:6px;cursor:pointer}
+  .btn-sair:hover{border-color:var(--vermelho);color:var(--vermelho)}
+
+  .banner{background:var(--vermelho);color:var(--branco);padding:22px 24px}
+  .banner h1{font-size:26px}
+  .banner p{opacity:.9;margin-top:4px}
+
+  .filtros{max-width:1300px;margin:20px auto 0;padding:0 24px;display:grid;
+    grid-template-columns:minmax(0,1.5fr) minmax(0,1.6fr) minmax(0,1.1fr) minmax(0,1fr) minmax(0,.8fr);gap:12px}
+  .filtros input[type=text],.filtros select{padding:11px;border:1px solid var(--borda);border-radius:8px;
+    font-size:14px;background:var(--branco);min-width:0;width:100%}
+  .resumo{max-width:1300px;margin:14px auto 0;padding:0 24px;font-size:14px;color:var(--cinza)}
+  .resumo b{color:var(--preto)}
+
+  .grid{max-width:1300px;margin:16px auto 40px;padding:0 24px;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
+  .card{background:var(--branco);border-radius:12px;overflow:hidden;border:1px solid var(--borda);
+    display:flex;flex-direction:column;transition:.2s;position:relative}
+  .card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.12)}
+  .card-top{background:var(--preto);color:var(--branco);padding:14px 16px;position:relative}
+  .card-top .familia{font-size:12px;color:var(--vermelho);font-weight:700;letter-spacing:1px}
+  .card-top h3{font-size:16px;margin-top:3px;line-height:1.3;padding-right:70px}
+  .selo{position:absolute;top:12px;right:12px;background:var(--vermelho);font-size:11px;
+    font-weight:700;padding:3px 8px;border-radius:4px}
+  .card-body{padding:14px 16px;flex:1}
+  .linha{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;
+    border-bottom:1px dashed var(--borda)}
+  .linha span:first-child{color:var(--cinza)}
+  .linha span:last-child{font-weight:600;text-align:right}
+  .mono{font-family:Consolas,monospace;font-size:12px}
+  .card-preco{padding:14px 16px;background:#FFF5F6;border-top:1px solid #FBD0D4}
+  .card-preco small{font-size:12px;color:var(--cinza)}
+  .preco{font-size:26px;font-weight:800;color:var(--vermelho)}
+  .cortesia{display:inline-block;margin-top:6px;background:var(--preto);color:var(--branco);
+    font-size:12px;padding:4px 10px;border-radius:20px}
+  .vazio{grid-column:1/-1;text-align:center;padding:50px;color:var(--cinza)}
+
+  /* ===== VEÍCULO VENDIDO (riscado / indisponível) ===== */
+  .card.vendido{opacity:.6;filter:grayscale(1)}
+  .card.vendido:hover{transform:none;box-shadow:none}
+  .card.vendido h3,
+  .card.vendido .linha span:last-child,
+  .card.vendido .preco{text-decoration:line-through;text-decoration-thickness:2px}
+  .card.vendido .selo{background:var(--cinza)}
+  .card.vendido .card-preco{background:#F0F0F0;border-top-color:var(--borda)}
+  .card.vendido::after{content:"VENDIDO";position:absolute;top:48%;left:50%;
+    transform:translate(-50%,-50%) rotate(-18deg);border:4px solid var(--vermelho);color:var(--vermelho);
+    background:rgba(255,255,255,.92);font-size:30px;font-weight:900;letter-spacing:4px;
+    padding:6px 18px;border-radius:8px;pointer-events:none}
+
+  footer{text-align:center;font-size:12px;color:var(--cinza);padding:20px}
+
+  @media(max-width:800px){
+    .filtros{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+    .filtros input[type=text],.filtros #fModelo{grid-column:1/-1}
+    header .titulo{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<section id="telaLogin">
+  <form class="login-box" id="formLogin" autocomplete="off">
+    <div class="logo">TOYOTA</div>
+    <h2>Ofertas Especiais &middot; Acesso Vendedor</h2>
+    <label for="usuario">Usuário</label>
+    <input type="text" id="usuario" placeholder="Digite seu usuário" required>
+    <label for="senha">Senha</label>
+    <input type="password" id="senha" placeholder="Digite sua senha" required>
+    <button type="submit" class="btn btn-full">Entrar</button>
+    <div class="erro" id="msgErro"></div>
+  </form>
+</section>
+
+<!-- ================= APP ================= -->
+<section id="telaApp">
+  <header>
+    <div style="display:flex;align-items:center">
+      <div class="logo">TOYOTA</div>
+      <span class="titulo">Ofertas Especiais</span>
+    </div>
+    <div class="usuario">
+      <span>Olá, <b id="nomeUsuario"></b></span>
+      <button class="btn-sair" id="btnSair" type="button">Sair</button>
+    </div>
+  </header>
+
+  <div class="banner">
+    <h1>Condições especiais de estoque</h1>
+    <p>Veículos com preço final e cortesias inclusas. Consulte a filial onde o veículo está.</p>
+  </div>
+
+  <div class="filtros">
+    <input type="text" id="fBusca" placeholder="Buscar por modelo, chassi, placa ou cor...">
+    <select id="fModelo"><option value="">Todos os modelos</option></select>
+    <select id="fCor"><option value="">Todas as cores</option></select>
+    <select id="fFilial"><option value="">Estoque Físico</option></select>
+    <select id="fOrdem">
+      <option value="precoAsc">Menor preço</option>
+      <option value="precoDesc">Maior preço</option>
+      <option value="modelo">Modelo (A-Z)</option>
+      <option value="filial">Filial (A-Z)</option>
+    </select>
+  </div>
+
+  <div class="resumo" id="resumo"></div>
+  <div class="grid" id="grid"></div>
+
+  <footer>Valores sujeitos a alteração sem aviso prévio. Uso interno.</footer>
+</section>
+
+<script>
+/* =========================================================
+   CONFIGURAÇÃO DE ACESSO
+   Edite aqui as senhas definidas com o time.
+   Obs.: login apenas visual (dados ficam no próprio HTML).
+   ========================================================= */
+const USUARIOS = [
+  { usuario: "vendedor", senha: "toyota2026",  nome: "Vendedor" },
+  { usuario: "gerente",  senha: "gerente2026", nome: "Gerente"  }
+];
+
+/* =========================================================
+   VEÍCULOS
+   Ordem: FILIAL | MODELO | FAB/MOD | COR | CHASSI | PLACA | PREÇO | CORTESIAS | STATUS
+   STATUS: "DISPONIVEL" ou "VENDIDO"  (vendido aparece riscado / indisponível)
+   ========================================================= */
+const DADOS = [
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRV AT","26/26","040 BRANCO POLAR","8AJBA3CD1T8013785","UJG3G12",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK IPATINGA","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD5T8015801","UWA0E67",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK GOV. VALADARES","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD8T8013475","UWA0E69",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK GOV. VALADARES","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD9T8015672","UWA0E70",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM SIA","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD9T8014831","UJG3F84",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CDXT8003532","UJG3F61",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD8T8007109","UJG3F93",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM AEROPORTO","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD3T8006109","UJG3G08",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM AEROPORTO","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD9T8006390","UJG3F57",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD2T8014413","UJG3G16",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM EPIA","HILUX CD DSL 4X4 SRV AT","26/26","218 PRETO ATITUDE","8AJBA3CD0T8010635","UJG3G82",262990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK SETE LAGOAS","HILUX CD DSL 4X4 SRX AT","26/26","1G3 CINZA GRANITO","8AJBA3CD5T8015247","UWA0E61",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK SETE LAGOAS","HILUX CD DSL 4X4 SRX AT","26/26","1L0 PRATA ARGENTUM M","8AJBA3CD6T8015807","UWA0E62",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK SETE LAGOAS","HILUX CD DSL 4X4 SRX AT","26/26","1L0 PRATA ARGENTUM M","8AJBA3CD9T8005899","UWA0E65",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK MURIAÉ","HILUX CD DSL 4X4 SRX AT","26/26","218 PRETO ATITUDE","8AJBA3CD7T8010177","UWA0E63",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK CONTAGEM","HILUX CD DSL 4X4 SRX AT","26/26","218 PRETO ATITUDE","8AJBA3CD3T8014078","UWA0E60",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK CARANDAÍ","HILUX CD DSL 4X4 SRX AT","26/26","1G3 CINZA GRANITO","8AJBA3CD8T8015033","UWA0E64",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRX AT","26/26","218 PRETO ATITUDE","8AJBA3CD0T8005564","UJG3G19",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRX AT","26/26","218 PRETO ATITUDE","8AJBA3CD3T8003596","UJG3F68",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM SIA","HILUX CD DSL 4X4 SRX AT","26/26","3T6 VERMELHO VOLCANO","8AJBA3CD1T8007534","UJG3F15",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM EPIA","HILUX CD DSL 4X4 SRX AT","26/26","218 PRETO ATITUDE","8AJBA3CD5T8003857","UJG3G93",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM EPIA","HILUX CD DSL 4X4 SRX AT","26/26","218 PRETO ATITUDE","8AJBA3CD7T8005318","UJG3G23",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM EPIA","HILUX CD DSL 4X4 SRX AT","26/26","218 PRETO ATITUDE","8AJBA3CD4T8008502","UJG3G65",291990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK SETE LAGOAS","HILUX CD DSL 4X4 SRX PLUS AT","26/26","218 PRETO ATITUDE","8AJBA3CD7T8008669","UWA0E68",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK PAMPULHA","HILUX CD DSL 4X4 SRX PLUS AT","26/26","1G3 CINZA GRANITO","8AJBA3CD3T8009396","UWA0E66",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM SIA","HILUX CD DSL 4X4 SRX PLUS AT","26/26","218 PRETO ATITUDE","8AJBA3CD1T8013642","UJG3F45",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRX PLUS AT","26/26","218 PRETO ATITUDE","8AJBA3CD1T8008456","UJG3G37",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM AEROPORTO","HILUX CD DSL 4X4 SRX PLUS AT","26/26","1G3 CINZA GRANITO","8AJBA3CDXT8009279","UJG3F95",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRX PLUS AT","26/26","1L0 PRATA ARGENTUM M","8AJBA3CD1T8010370","UJG3G14",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM TAGUATINGA","HILUX CD DSL 4X4 SRX PLUS AT","26/26","218 PRETO ATITUDE","8AJBA3CD1T8003614","UJG3G26",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM EPIA","HILUX CD DSL 4X4 SRX PLUS AT","26/26","1G3 CINZA GRANITO","8AJBA3CD9T8007961","UJG3G48",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM EPIA","HILUX CD DSL 4X4 SRX PLUS AT","26/26","089 BRANCO LUNAR","8AJBA3CD1T8014726","UJG3G21",301990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM SIA","SW4 DSL 4X4 SRX PLATINUM AT 7S","26/26","1L0 PRATA ARGENTUM M","8AJBA3FS8T0426019","UJG3F72",354990,"Emplacado + IPVA","DISPONIVEL"],
+  ["KRM SIA","SW4 DSL 4X4 SRX PLATINUM AT 7S","26/26","1L0 PRATA ARGENTUM M","8AJBA3FS7T0426061","UJG3F62",354990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK CARANDAÍ","Yaris Cross XRE 1.5 CVT","26/27","1G3 CINZA GRANITO","9BRAD8AF0V3031726","UVZ8F22",139990,"Emplacado + IPVA","DISPONIVEL"],
+  ["OSK PAMPULHA","Yaris Cross XRE Hybrid 1.5L","26/27","1G3 CINZA GRANITO","9BRA88BF6V3022466","UVZ8F23",149990,"Emplacado + IPVA","DISPONIVEL"],
+];
+
+/* ===================== PREPARAÇÃO ===================== */
+function familiaDe(modelo){
+  const m = String(modelo).toUpperCase();
+  if (m.includes("HILUX")) return "HILUX";
+  if (m.includes("SW4")) return "SW4";
+  if (m.includes("YARIS CROSS")) return "YARIS CROSS";
+  if (m.includes("COROLLA CROSS")) return "COROLLA CROSS";
+  if (m.includes("COROLLA")) return "COROLLA";
+  return m.split(" ")[0];
+}
+function precoNum(v){
+  if (typeof v === "number") return v;
+  const s = String(v).replace(/[^\d,]/g,"").replace(",",".");
+  const n = parseFloat(s); return isNaN(n) ? 0 : n;
+}
+function semAcento(s){ return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toUpperCase(); }
+
+const VEICULOS = DADOS.map(v => {
+  const status = semAcento(v[8]) || "DISPONIVEL";
+  return {
+    filial:v[0], modelo:v[1], fabMod:v[2], cor:v[3], chassi:v[4], placa:v[5],
+    preco:precoNum(v[6]), cortesia:v[7] || "", status,
+    vendido: status === "VENDIDO",
+    familia: familiaDe(v[1])
+  };
+});
+
+const brl = n => n.toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $ = id => document.getElementById(id);
+
+/* ===================== LOGIN ===================== */
+const CHAVE_SESSAO = "ofertasToyotaUser";
+
+function entrar(nome){
+  $("telaLogin").style.display = "none";
+  $("telaApp").style.display = "block";
+  $("nomeUsuario").textContent = nome;
+  render();
+}
+
+$("formLogin").addEventListener("submit", e => {
+  e.preventDefault();
+  const u = $("usuario").value.trim().toLowerCase();
+  const s = $("senha").value;
+  const ok = USUARIOS.find(x => x.usuario.toLowerCase() === u && x.senha === s);
+  if (!ok){ $("msgErro").textContent = "Usuário ou senha inválidos."; return; }
+  $("msgErro").textContent = "";
+  sessionStorage.setItem(CHAVE_SESSAO, ok.nome);
+  entrar(ok.nome);
+});
+
+$("btnSair").addEventListener("click", () => {
+  sessionStorage.removeItem(CHAVE_SESSAO);
+  $("formLogin").reset();
+  $("telaApp").style.display = "none";
+  $("telaLogin").style.display = "flex";
+});
+
+/* ===================== FILTROS ===================== */
+function popularSelect(id, valores){
+  const sel = $(id);
+  [...new Set(valores)].sort().forEach(v => {
+    const o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o);
+  });
+}
+popularSelect("fModelo", VEICULOS.map(v => v.modelo));
+popularSelect("fCor",    VEICULOS.map(v => v.cor));
+popularSelect("fFilial",  VEICULOS.map(v => v.filial));
+["fBusca","fModelo","fCor","fFilial","fOrdem"].forEach(id => $(id).addEventListener("input", render));
+
+/* ===================== RENDER ===================== */
+function render(){
+  const busca = $("fBusca").value.trim().toUpperCase();
+  const mod = $("fModelo").value, cor = $("fCor").value, fil = $("fFilial").value, ord = $("fOrdem").value;
+
+  let lista = VEICULOS.filter(v =>
+    (!mod || v.modelo === mod) &&
+    (!cor || v.cor === cor) &&
+    (!fil || v.filial === fil) &&
+    (!busca || [v.modelo,v.chassi,v.placa,v.cor,v.filial].join(" ").toUpperCase().includes(busca))
+  );
+
+  const ordenadores = {
+    precoAsc:(a,b)=>a.preco-b.preco,
+    precoDesc:(a,b)=>b.preco-a.preco,
+    modelo:(a,b)=>a.modelo.localeCompare(b.modelo),
+    filial:(a,b)=>a.filial.localeCompare(b.filial)
+  };
+  // Disponíveis primeiro, vendidos sempre no final
+  lista.sort((a,b) => (a.vendido - b.vendido) || ordenadores[ord](a,b));
+
+  const disp = lista.filter(v => !v.vendido), vend = lista.length - disp.length;
+  $("resumo").innerHTML = `<b>${disp.length}</b> disponível(is)` +
+    (vend ? ` &middot; <b>${vend}</b> vendido(s)` : "") +
+    (disp.length ? ` &middot; a partir de <b>${brl(Math.min(...disp.map(v=>v.preco)))}</b>` : "");
+
+  $("grid").innerHTML = lista.length ? lista.map(v => `
+    <div class="card${v.vendido ? " vendido" : ""}">
+      <div class="card-top">
+        <span class="selo">${v.vendido ? "INDISPONÍVEL" : "OFERTA"}</span>
+        <div class="familia">${esc(v.familia)}</div>
+        <h3>${esc(v.modelo)}</h3>
+      </div>
+      <div class="card-body">
+        <div class="linha"><span>Filial</span><span>${esc(v.filial)}</span></div>
+        <div class="linha"><span>Fab/Mod</span><span>${esc(v.fabMod)}</span></div>
+        <div class="linha"><span>Cor</span><span>${esc(v.cor)}</span></div>
+        <div class="linha"><span>Placa</span><span class="mono">${esc(v.placa)}</span></div>
+        <div class="linha"><span>Chassi</span><span class="mono">${esc(v.chassi)}</span></div>
+      </div>
+      <div class="card-preco">
+        <small>${v.vendido ? "Vendido" : "Preço final"}</small>
+        <div class="preco">${brl(v.preco)}</div>
+        ${v.cortesia && !v.vendido ? `<span class="cortesia">🎁 ${esc(v.cortesia)}</span>` : ""}
+      </div>
+    </div>`).join("")
+    : `<div class="vazio">Nenhum veículo encontrado com esses filtros.</div>`;
+}
+
+/* Mantém logado enquanto a aba estiver aberta */
+const sessao = sessionStorage.getItem(CHAVE_SESSAO);
+if (sessao) entrar(sessao);
+</script>
+</body>
+</html>
